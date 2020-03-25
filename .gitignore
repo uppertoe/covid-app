@@ -91,5 +91,5 @@ local_settings.py
 db.sqlite3
 
 #Secrets
-secrets.py
-covid_app/secrets.py
+secret_key.py
+covid_app/secret_key.py
