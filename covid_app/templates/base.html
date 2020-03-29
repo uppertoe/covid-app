@@ -3,30 +3,29 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>qSwitch</title>
+    <title>qSwitch{% block title %}{% endblock title %}</title>
 
     <!-- Materialize CSS via CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-    {% comment %}
-    <link rel="stylesheet" href="{% static 'covid_app/css/master.css' %}">
-    {% endcomment %}
 
 </head>
 
 <body>
     <nav>
-        <div class="nav-wrapper">
-            <a href="{% url 'home' %}" class="brand-logo">qSwitch</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                {% if user.is_authenticated %}
-                <li><a href="#">Request Assistance</a></li>
-                <li><a href="#">My Account</a></li>
-                {% else %}
-                <li><a href="#">Login</a></li>
-                <li><a href="#">Sign Up</a></li>
-                {% endif %}
-            </ul>
+        <div class='container'>
+            <div class="nav-wrapper">
+                <a href="{% url 'home' %}" class="brand-logo">qSwitch</a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    {% if user.is_authenticated %}
+                    <li><a href="#">Request Assistance</a></li>
+                    <li><a href="#">My Profile</a></li>
+                    <li><a href="{% url 'logout'%}">Logout</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="#">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
     <div class='container'>
