@@ -129,3 +129,6 @@ STATICFILES_DIR = [os.path.join(BASE_DIR,'static')]
 
 LOGIN_REDIRECT_URL = '/content/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#Default user model is used, but can be customised in the accounts app
+AUTH_USER_MODEL = 'accounts.User'
