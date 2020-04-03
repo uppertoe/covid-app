@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 class Availability(models.Model):
     avail_start = models.DateTimeField('Availability start time', null=True)
@@ -14,6 +15,9 @@ class Availability(models.Model):
     def hours_between(self):
         delta = self.avail_end - self.avail_start
         return int(delta.seconds / 3600)
+
+    def is_available(self):
+        return self.avail_start < timezone.now() and self.avail_end > timezone.now()
 
     def __str__(self):
         return f'({self.hours_between()} hour(s); from {self.avail_start} to {self.avail_end})'
@@ -33,10 +37,7 @@ class State(models.Model):
     def __str__(self):
         return self.state_name
 
-'''
-Set up the user its attached profile
-'''
-
+#Set up the user and its attached profile
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -70,8 +71,8 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-class User(AbstractUser):
-    #Override default User class to allow login with email address
+#Override default User class to allow login with email address
+class User(AbstractUser):    
     username = None
     email = models.EmailField('email address', unique=True)
 
@@ -84,6 +85,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     mobile = models.CharField(max_length=20)
     specialty = models.ManyToManyField(Specialty)
+    availability = models.ManyToManyField(Availability)
 
     def __str__(self):
         return self.user.email

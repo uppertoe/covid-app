@@ -9,13 +9,9 @@ class UserProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'user profile'
 
-'''
-Ensure that the email address is used as the username
-'''
+#Ensure that the email address is used as the username
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    """Define admin model for custom User model with no email field."""
-
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (('Personal info'), {'fields': ('first_name', 'last_name')}),
@@ -33,6 +29,7 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
 
+    #Link the UserProfile to the User admin view
     inlines = (UserProfileInline,)
 
 # Register your models here.
