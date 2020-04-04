@@ -83,9 +83,9 @@ class User(AbstractUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    mobile = models.CharField(max_length=20)
-    specialty = models.ManyToManyField(Specialty)
-    availability = models.ManyToManyField(Availability)
+    mobile = models.CharField(max_length=20, blank=True)
+    specialty = models.ManyToManyField(Specialty, blank=True)
+    availability = models.ManyToManyField(Availability, blank=True)
 
     def __str__(self):
         return self.user.email
