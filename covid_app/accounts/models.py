@@ -1,26 +1,11 @@
 import datetime
+from django.utils.translation import gettext as _
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-
-class Availability(models.Model):
-    avail_start = models.DateTimeField('Availability start time', null=True)
-    avail_end = models.DateTimeField('Availability end time', null=True)
-
-    class Meta:
-        verbose_name_plural = "Availabilities"
-
-    def hours_between(self):
-        delta = self.avail_end - self.avail_start
-        return int(delta.seconds / 3600)
-
-    def is_available(self):
-        return self.avail_start < timezone.now() and self.avail_end > timezone.now()
-
-    def __str__(self):
-        return f'({self.hours_between()} hour(s); from {self.avail_start} to {self.avail_end})'
+from django.core.exceptions import ValidationError
 
 class Specialty(models.Model):
     specialty_name = models.CharField(max_length=200)
@@ -72,7 +57,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 #Override default User class to allow login with email address
-class User(AbstractUser):    
+class UserLogin(AbstractUser):    
     username = None
     email = models.EmailField('email address', unique=True)
 
@@ -82,19 +67,20 @@ class User(AbstractUser):
     objects = UserManager()
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(UserLogin, on_delete=models.CASCADE)
     mobile = models.CharField(max_length=20, blank=True)
     specialty = models.ManyToManyField(Specialty, blank=True)
-    availability = models.ManyToManyField(Availability, blank=True)
-
+    state = models.ForeignKey(State,on_delete=models.CASCADE, blank=True, null=True)
+    
     def __str__(self):
         return self.user.email
 
-@receiver(post_save, sender=User)
+#Listen for a User being saved to the database, and ensure it has an associated blank UserProfile
+@receiver(post_save, sender=UserLogin)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=UserLogin)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()

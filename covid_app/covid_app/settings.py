@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'pagecontent',
+    'avail_calendar',
 ]
 
 MIDDLEWARE = [
@@ -125,10 +126,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIR = [os.path.join(BASE_DIR,'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,'static'),
+    ]
 
 LOGIN_REDIRECT_URL = '/content/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #Default user model is used, but can be customised in the accounts app
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.UserLogin'

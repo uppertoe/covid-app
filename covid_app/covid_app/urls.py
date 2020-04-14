@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('accounts.urls')),
     path('content/',include('pagecontent.urls')),
+    path('calendar/', include('avail_calendar.urls'))
 ]

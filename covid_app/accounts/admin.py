@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Availability, Specialty, State, UserProfile, User
+from .models import Specialty, State, UserProfile, UserLogin
+from avail_calendar.models import Shift
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # Define an inline admin descriptor for UserProfile model
@@ -9,8 +10,13 @@ class UserProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'user profile'
 
+class ShiftInline(admin.StackedInline):
+    model = Shift
+    can_delete = False
+    verbose_name_plural = 'shifts'
+
 #Ensure that the email address is used as the username
-@admin.register(User)
+@admin.register(UserLogin)
 class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -30,9 +36,8 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
 
     #Link the UserProfile to the User admin view
-    inlines = (UserProfileInline,)
+    inlines = (UserProfileInline, ShiftInline)
 
 # Register your models here.
-admin.site.register(Availability)
 admin.site.register(Specialty)
 admin.site.register(State)

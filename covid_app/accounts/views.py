@@ -1,11 +1,26 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.template.defaulttags import register
 from .forms import SignUpForm, UserProfileForm, UserForm
-from .models import UserProfile, User
+from .models import UserProfile, UserLogin
+
+#Add 'material design' icon names to context for the template
+material_icons = {
+    'mobile' : 'smartphone',
+    'specialty' : 'work_outline',
+    'state' : 'my_location',
+}
+
+#Create a custom template filter to allow the material design dict to be looked up
+@register.filter
+def get_item_or_placeholder(dictionary, key, placeholder='label'):
+    item = dictionary.get(key)
+    if item == None:
+        item = placeholder
+    return item
 
 # Create your views here.
-
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -37,5 +52,7 @@ def user_profile_view(request):
     context = {
         'user_form' : UserForm(instance = current_user),
         'profile_form': UserProfileForm(instance = current_user_profile),
+        'material_icons': material_icons
     }
+    # context.update(material_icons)
     return render(request, 'accounts/user_profile.html', context)

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 
 <head>
     <meta charset="UTF-8">
@@ -7,15 +8,35 @@
 
     <!-- Materialize CSS via CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    {% comment %} Only include if materialize CDN is not available
+    <link rel="stylesheet" href="{% static 'covid_app/css/materialize.css' %}">
+    {% endcomment %}
+
+    <!-- Material Icons font via CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% comment %} Only include if materialicons CDN not available
+    <link rel="stylesheet" href="{% static 'covid_app/css/materialicons.css' %}">
+    {% endcomment %}
+
+    <link rel="stylesheet" href="{% static 'covid_app/css/main.css' %}">
+
+    <script>
+        //Plugs in the responsive side-navbar to materalize-css
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems, {});
+        });
+    </script>
 
 </head>
 
 <body>
-    <nav>
+    <nav class='green'>
         <div class='container'>
             <div class="nav-wrapper">
                 <a href="{% url 'home' %}" class="brand-logo">qSwitch</a>
-                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul id="nav-top" class="right hide-on-med-and-down">
                     {% if user.is_authenticated %}
                     <li><a href="#">Dashboard</a></li>
                     <li><a href="{% url 'profile'%}">Edit Profile</a></li>
@@ -28,6 +49,17 @@
             </div>
         </div>
     </nav>
+    <ul id="mobile-demo" class="sidenav">
+        <li><a href="{% url 'home' %}"><i class="material-icons">home</i>Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="#"><i class="material-icons">web</i>Dashboard</a></li>
+        <li><a href="{% url 'profile'%}"><i class="material-icons">create</i>Edit Profile</a></li>
+        <li><a href="{% url 'logout'%}"><i class="material-icons">exit_to_app</i>Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}"><i class="material-icons">lock</i>Login</a></li>
+        <li><a href="{% url 'signup'%}"><i class="material-icons">add_box</i>Sign Up</a></li>
+        {% endif %}
+    </ul>
     <div class='container'>
         {%block content%}
 
@@ -37,5 +69,8 @@
 
 <!-- Materialize JS via CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+{% comment %} Only use if Materialize JS is not available by CDN
+<script src="{% static 'covid_app/js/materialize.js' %}"></script>
+{% endcomment %}
 
 </html>
